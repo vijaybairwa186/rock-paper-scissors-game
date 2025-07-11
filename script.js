@@ -8,7 +8,6 @@ const userScorePara = document.querySelector("#user-score");
 const compScorePara = document.querySelector("#comp-score");
 const resetBtn = document.querySelector("#reset");
 
-// 🎵 Sounds
 const winSound = new Audio("mixkit-arcade-game-jump-coin-216.wav");
 const loseSound = new Audio("mixkit-losing-bleeps-2026.wav");
 const drawSound = new Audio("mixkit-player-jumping-in-a-video-game-2043.wav");
@@ -74,7 +73,6 @@ const playGame = (userChoice) => {
   }
 };
 
-// User click
 choices.forEach((choice) => {
   choice.addEventListener("click", () => {
     const userChoice = choice.getAttribute("id");
@@ -82,7 +80,6 @@ choices.forEach((choice) => {
   });
 });
 
-// Reset Game
 resetBtn.addEventListener("click", () => {
   userScore = 0;
   compScore = 0;
