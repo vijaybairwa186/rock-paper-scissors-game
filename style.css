@@ -1,0 +1,136 @@
+/* Base reset and font */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+  text-align: center;
+}
+
+body {
+  background-color: #f9fbfd;
+  color: #333;
+  min-height: 100vh;
+}
+
+/* Header */
+h1 {
+  background-color: #00bcd4;
+  color: white;
+  height: 5rem;
+  line-height: 5rem;
+  font-size: 2.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Choices */
+.choices {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+}
+
+.choice {
+  height: 150px;
+  width: 150px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  border: 2px solid #ccc;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.choice:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 188, 212, 0.4);
+}
+
+img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Win/Lose glow */
+.choice.glow-green {
+  box-shadow: 0 0 25px 5px #4caf50;
+}
+
+.choice.glow-red {
+  box-shadow: 0 0 25px 5px #ef5350;
+}
+
+/* Scoreboard */
+.score-board {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  margin-top: 2rem;
+  gap: 4rem;
+}
+
+.score p:first-child {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #00bcd4;
+}
+
+/* Message Area */
+.msg-container {
+  margin-top: 2.5rem;
+}
+
+#msg {
+  font-size: 1.8rem;
+  padding: 1rem 2rem;
+  background-color: #ff6f61;
+  color: white;
+  border-radius: 10px;
+  display: inline-block;
+  box-shadow: 0 0 10px rgba(255, 111, 97, 0.3);
+}
+
+#match-msg {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+/* Reset Button */
+#reset {
+  margin-top: 2.5rem;
+  padding: 0.8rem 2rem;
+  background-color: #072aed; /* Lemon yellow */
+  color: white;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(249, 168, 38, 0.3);
+  transition: background-color 0.3s ease;
+}
+
+#reset:hover {
+  background-color: #f57c00; /* Orange hover */
+}
+
+
+/* Confetti container */
+#confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+}
