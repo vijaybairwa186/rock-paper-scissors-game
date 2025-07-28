@@ -1,17 +1,23 @@
 let userScore = 0;
 let compScore = 0;
-let gameOver = false;
+const MAX_SCORE = 5;
 
 const choices = document.querySelectorAll(".choice");
 const msg = document.querySelector("#msg");
+const roundResultMsg = document.querySelector("#round-result-msg");
 const userScorePara = document.querySelector("#user-score");
 const compScorePara = document.querySelector("#comp-score");
 const resetBtn = document.querySelector("#reset");
+const confettiContainer = document.querySelector("#confetti-container");
 
 const winSound = new Audio("mixkit-arcade-game-jump-coin-216.wav");
 const loseSound = new Audio("mixkit-losing-bleeps-2026.wav");
 const drawSound = new Audio("mixkit-player-jumping-in-a-video-game-2043.wav");
 const resetSound = new Audio("mixkit-arcade-game-over-3068.wav");
+const gameWinSound = new Audio("mixkit-game-level-completed-2059.wav");
+const gameLoseSound = new Audio("mixkit-winning-a-coin-video-game-2069.wav");
+
+let gameOver = false;
 
 const genCompChoice = () => {
   const options = ["rock", "paper", "scissors"];
@@ -19,47 +25,106 @@ const genCompChoice = () => {
   return options[randIdx];
 };
 
-const drawGame = () => {
-  msg.innerText = "Draw! Play again.";
+const resetChoiceHighlights = () => {
+  choices.forEach((choice) => {
+    choice.classList.remove("win-glow", "lose-glow");
+  });
+};
+
+const displayRoundResult = (userWin, userChoice, compChoice) => {
+  resetChoiceHighlights();
+
+  const userChoiceElement = document.getElementById(userChoice);
+  const compChoiceElement = document.getElementById(compChoice);
+
+  if (userWin) {
+    roundResultMsg.innerText = `Your ${userChoice} beats ${compChoice}.`;
+    userChoiceElement.classList.add("win-glow");
+    compChoiceElement.classList.add("lose-glow");
+    winSound.play();
+  } else {
+    roundResultMsg.innerText = `${compChoice} beats your ${userChoice}.`;
+    userChoiceElement.classList.add("lose-glow");
+    compChoiceElement.classList.add("win-glow");
+    loseSound.play();
+  }
+};
+
+const drawGame = (userChoice) => {
+  msg.innerText = "It's a Draw!";
   msg.style.backgroundColor = "#ff9800";
+  roundResultMsg.innerText = `Both chose ${userChoice}.`;
+  resetChoiceHighlights();
   drawSound.play();
+};
+
+const createConfetti = () => {
+  for (let i = 0; i < 100; i++) {
+    const confettiPiece = document.createElement("div");
+    confettiPiece.classList.add("confetti-piece");
+    confettiPiece.style.left = `${Math.random() * 100}vw`;
+    confettiPiece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+    confettiPiece.style.animationDelay = `${Math.random() * 2}s`;
+    confettiPiece.style.width = `${Math.random() * 8 + 5}px`;
+    confettiPiece.style.height = `${Math.random() * 8 + 5}px`;
+    confettiContainer.appendChild(confettiPiece);
+
+    confettiPiece.addEventListener("animationend", () => {
+      confettiPiece.remove();
+    });
+  }
 };
 
 const endGame = (winner) => {
   gameOver = true;
-  msg.innerText = `${winner} won the game! Click Reset to play again.`;
-  msg.style.backgroundColor = winner === "You" ? "#4caf50" : "#f44336";
+  resetChoiceHighlights();
+
+  if (winner === "You") {
+    msg.innerText = `🥳 You won the game! 🥳`;
+    msg.style.backgroundColor = "#4caf50";
+    gameWinSound.play();
+    createConfetti();
+  } else {
+    msg.innerText = `Computer won the game! Better luck next time.`;
+    msg.style.backgroundColor = "#f44336";
+    gameLoseSound.play();
+  }
+  roundResultMsg.innerText = "Click Reset to play again!";
+  disableChoices();
 };
 
 const showWinner = (userWin, userChoice, compChoice) => {
   if (userWin) {
     userScore++;
     userScorePara.innerText = userScore;
-    msg.innerText = `You win! Your ${userChoice} beats ${compChoice}`;
-    msg.style.backgroundColor = "#4caf50";
-    winSound.play();
-    if (userScore === 5) {
-      endGame("You");
-    }
+    msg.innerText = "You win this round!";
+    msg.style.backgroundColor = "#8bc34a";
   } else {
     compScore++;
     compScorePara.innerText = compScore;
-    msg.innerText = `You lost. ${compChoice} beats your ${userChoice}`;
-    msg.style.backgroundColor = "#f44336";
-    loseSound.play();
-    if (compScore === 5) {
-      endGame("Computer");
-    }
+    msg.innerText = "You lose this round.";
+    msg.style.backgroundColor = "#ff7043";
+  }
+
+  displayRoundResult(userWin, userChoice, compChoice);
+
+  if (userScore === MAX_SCORE) {
+    endGame("You");
+  } else if (compScore === MAX_SCORE) {
+    endGame("Computer");
   }
 };
 
 const playGame = (userChoice) => {
-  if (gameOver) return;
+  if (gameOver) {
+    msg.innerText = "Game over! Click Reset to play again.";
+    return;
+  }
 
   const compChoice = genCompChoice();
 
   if (userChoice === compChoice) {
-    drawGame();
+    drawGame(userChoice);
   } else {
     let userWin = true;
     if (userChoice === "rock") {
@@ -75,10 +140,26 @@ const playGame = (userChoice) => {
 
 choices.forEach((choice) => {
   choice.addEventListener("click", () => {
-    const userChoice = choice.getAttribute("id");
-    playGame(userChoice);
+    if (!gameOver) {
+      const userChoice = choice.getAttribute("id");
+      playGame(userChoice);
+    }
   });
 });
+
+const disableChoices = () => {
+  choices.forEach((choice) => {
+    choice.style.pointerEvents = "none";
+    choice.style.opacity = "0.7";
+  });
+};
+
+const enableChoices = () => {
+  choices.forEach((choice) => {
+    choice.style.pointerEvents = "auto";
+    choice.style.opacity = "1";
+  });
+};
 
 resetBtn.addEventListener("click", () => {
   userScore = 0;
@@ -86,7 +167,12 @@ resetBtn.addEventListener("click", () => {
   gameOver = false;
   userScorePara.innerText = 0;
   compScorePara.innerText = 0;
-  msg.innerText = "Game Reset. Play again!";
-  msg.style.backgroundColor = "#00bcd4";
+  msg.innerText = "Play your move";
+  msg.style.backgroundColor = "#ff6f61";
+  roundResultMsg.innerText = "";
+  resetChoiceHighlights();
+  enableChoices();
   resetSound.play();
 });
+
+resetChoiceHighlights();
